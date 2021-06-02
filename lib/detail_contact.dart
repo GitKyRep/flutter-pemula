@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_book/list_contact.dart';
 import 'package:phone_book/model/person.dart';
+import 'package:rounded_letter/rounded_letter.dart';
+import 'package:rounded_letter/shape_type.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailContact extends StatelessWidget {
@@ -105,10 +107,7 @@ class _DetailMobileContactState extends State<DetailMobileContact> {
                     ),
                     background: Hero(
                       tag: "avatar-${widget.index}",
-                      child: Image.asset(
-                        "${widget.person.imageAsset}",
-                        fit: BoxFit.cover,
-                      ),
+                      child: imageContact(widget.person),
                     ));
               },
             ),
@@ -378,5 +377,33 @@ class _DetailMobileContactState extends State<DetailMobileContact> {
         ],
       ),
     );
+  }
+
+  Widget imageContact(Person person) {
+    if (person.imageAsset == "") {
+      var name = (person.lastName == "")
+          ? "${person.firstName[0]}".toUpperCase()
+          : "${person.firstName[0]}${person.lastName[0]}".toUpperCase();
+      return Container(
+        margin: EdgeInsets.only(top: 50),
+        child: Center(
+          child: RoundedLetter(
+            text: "$name",
+            shapeColor: Color(0xFF1ECCE3),
+            shapeType: ShapeType.circle,
+            borderColor: Color(0xFF2AECEC),
+            borderWidth: 1,
+            shapeSize: 120,
+            fontSize: 30,
+            key: Key(person.firstName),
+          ),
+        ),
+      );
+    } else {
+      return Image.asset(
+        "${widget.person.imageAsset}",
+        fit: BoxFit.cover,
+      );
+    }
   }
 }

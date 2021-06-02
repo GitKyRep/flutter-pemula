@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:phone_book/detail_contact.dart';
 import 'package:phone_book/model/person.dart';
+import 'package:rounded_letter/rounded_letter.dart';
+import 'package:rounded_letter/shape_type.dart';
 
 class ListContact extends StatelessWidget {
   @override
@@ -26,26 +28,16 @@ class ListContact extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Hero(
                         tag: "avatar-$index",
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blue),
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: AssetImage(person.imageAsset),
-                                fit: BoxFit.fill),
-                          ),
-                        ),
+                        child: imageContact(person),
                       ),
                     )),
                 Expanded(
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          top: 8.0, bottom: 8.0, right: 8.0, left: 4.0),
+                          top: 4.0, bottom: 4.0, right: 4.0, left: 4.0),
                       child: Container(
-                        margin: EdgeInsets.only(top: 16),
+                        margin: EdgeInsets.only(top: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -68,15 +60,15 @@ class ListContact extends StatelessWidget {
                     )),
                 Expanded(
                   flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(28.0),
+                  child: Container(
+                    margin: const EdgeInsets.only(top:16.0),
                     child: IconButton(
                       icon: Icon(
                         Icons.call,
                         color: Colors.black,
                       ),
                       onPressed: () {
-                        callNumber(context,person.phoneNumber);
+                        callNumber(context, person.phoneNumber);
                       },
                     ),
                   ),
@@ -92,7 +84,8 @@ class ListContact extends StatelessWidget {
 
   void callNumber(BuildContext context, String number) async {
     try {
-      await FlutterPhoneDirectCaller.callNumber(number.replaceAll(new RegExp(r'[^0-9]'),''));
+      await FlutterPhoneDirectCaller.callNumber(
+          number.replaceAll(new RegExp(r'[^0-9]'), ''));
     } catch (e) {
       showSnackbar(context, "Ada error $e");
     }
@@ -103,5 +96,32 @@ class ListContact extends StatelessWidget {
       content: Text("$value selected"),
       duration: Duration(seconds: 1),
     ));
+  }
+
+  Widget imageContact(Person person) {
+    if (person.imageAsset == "") {
+      var name = (person.lastName=="") ? "${person.firstName[0]}".toUpperCase():"${person.firstName[0]}${person.lastName[0]}".toUpperCase() ;
+      return RoundedLetter(
+        text: "$name",
+        shapeColor: Color(0xFF1ECCE3),
+        shapeType: ShapeType.circle,
+        borderColor: Color(0xFF2AECEC),
+        borderWidth: 1,
+        shapeSize: 60,
+        fontSize: 30,
+        key: Key(person.firstName),
+      );
+    } else {
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue),
+          shape: BoxShape.circle,
+          image: DecorationImage(
+              image: AssetImage(person.imageAsset), fit: BoxFit.fill),
+        ),
+      );
+    }
   }
 }
